@@ -43,5 +43,9 @@ public class AskMessage extends Message {
 	public Sens getSens(){
 		return this.sens;
 	}
+	
+	public void decrementTtl (){
+		this.ttl--;
+	}
 
 } 

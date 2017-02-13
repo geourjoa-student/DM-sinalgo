@@ -4,20 +4,19 @@ import sinalgo.nodes.messages.Message;
 
 public class ReplyMessage extends Message {
 		
-	//Le 3e champs des messages (je le comprend comme un TTL de réséau
-	private int ttl;
+
 
 	private int msgId;
 	
 	private Sens sens;
 	
-	public ReplyMessage(  int idEmetteur, int ttl, Sens sens) {
+	public ReplyMessage(  int idEmetteur, Sens sens) {
 		super();
 		/*msgId = msgCounter;
 		msgCounter++;*/
 		
 		this.msgId=idEmetteur;
-		this.ttl=ttl;
+	
 		
 		this.sens=sens;
 	}
@@ -30,10 +29,6 @@ public class ReplyMessage extends Message {
 	
 	public String toString() {
 		return "apd" + msgId;
-	}
-
-	public int getTtl() {
-		return ttl;
 	}
 
 	public int getId() {
