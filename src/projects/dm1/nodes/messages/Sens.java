@@ -1,8 +1,8 @@
 package projects.dm1.nodes.messages;
 
-public enum TypeMessage {
+public enum Sens {
 	
-	ASK,
-	REPLY;
+	DROITE,
+	GAUCHE;
 
 }
