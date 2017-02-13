@@ -68,7 +68,7 @@ public class CustomGlobal extends AbstractCustomGlobal {
 		for (int i = 0; i < numOfNodes; i++) {
 			double posX = centerPosX + range * Math.cos(angle);
 			double posY = centerPosY + range * Math.sin(angle);
-			APDNode node = new InitNode();
+			APDNode node = new APDNode();
 		
 			node.setPosition(posX, posY, 0);
 			node.finishInitializationWithDefaultModels(true);
@@ -80,5 +80,9 @@ public class CustomGlobal extends AbstractCustomGlobal {
 		addEdge(theNodes[0], theNodes[numOfNodes - 1]);
 		// Repaint the GUI as we have added some nodes
 		sinalgo.tools.Tools.repaintGUI();
+		
+		for (int i = 0; i < theNodes.length; i++) {
+			theNodes[i].initiate();
+		}
 	}
 }
