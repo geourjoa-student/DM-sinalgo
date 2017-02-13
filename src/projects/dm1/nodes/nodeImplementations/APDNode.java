@@ -17,11 +17,19 @@ public class APDNode extends sinalgo.nodes.Node {
 	 * the nodes. // instead use the init() method }
 	 */
 
-	private int l = 1;
+	private static int compteur = 0;
 
-	private int n = 0;
+	private int l;
+
+	private int n;
 
 	private boolean resultat;
+
+	public APDNode() {
+		l = 1;
+		n = 0;
+		ID = compteur++;
+	}
 
 	/* InitNode() { ... } */
 	public void init() {
@@ -76,7 +84,7 @@ public class APDNode extends sinalgo.nodes.Node {
 
 						} else {
 							resultat = false;
-							// setColor(Color.BLUE);
+							setColor(Color.BLUE);
 						}
 					}
 
@@ -91,36 +99,43 @@ public class APDNode extends sinalgo.nodes.Node {
 							}
 						} else {
 							resultat = false;
-							// setColor(Color.BLUE);
+							setColor(Color.BLUE);
 						}
 					}
 				}
 
-			} else if (msg instanceof ReplyMessage) {
-				ReplyMessage message = (ReplyMessage) msg;
-				if (message.getId() != ID) {
-					// On fait juste suivre le message reçu, merci l'algo d'être
-					// explicite sur ce qu'est M, vraiment MERCI !
-					if (message.getSens() == Sens.DROIT) {
-						send(msg, voisinDroit());
+			} else {
+				if (msg instanceof ReplyMessage) {
+
+					ReplyMessage message = (ReplyMessage) msg;
+					if (message.getId() != ID) {
+						// On fait juste suivre le message reçu, merci l'algo
+						// d'être
+						// explicite sur ce qu'est M, vraiment MERCI !
+						if (message.getSens() == Sens.DROIT) {
+							send(msg, voisinDroit());
+						} else {
+							send(msg, voisinGauche());
+						}
 					} else {
-						send(msg, voisinGauche());
-					}
-				} else {
-					
-					if (message.getId() == ID) { // probablement le test le plus utile de l'histoire de l'informatique
-						n++;
-						if (n == 2) {
-							n = 0;
-							l= l*2;
-							send(new AskMessage(ID, l - 1, Sens.DROIT), voisinDroit());
-							send(new AskMessage(ID, l - 1, Sens.GAUCHE), voisinGauche());
-						}
-					}
-					
-				}
-			}
 
+						if (message.getId() == ID) { // probablement le test le
+														// plus utile de
+														// l'histoire de
+														// l'informatique
+							n++;
+							if (n == 2) {
+								n = 0;
+								l = l * 2;
+								send(new AskMessage(ID, l - 1, Sens.DROIT), voisinDroit());
+								send(new AskMessage(ID, l - 1, Sens.GAUCHE), voisinGauche());
+							}
+						}
+
+					}
+				}
+
+			}
 		}
 	}
 
