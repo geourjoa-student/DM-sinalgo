@@ -65,33 +65,33 @@ public class APDNode extends sinalgo.nodes.Node {
 				} else {
 					if (message.getTtl() > 0) {
 						if (message.getId() > ID) {
-							
+
 							message.decrementTtl();
 
-							if (message.getSens()==Sens.DROIT) {
-								send(msg,voisinDroit());
+							if (message.getSens() == Sens.DROIT) {
+								send(msg, voisinDroit());
 							} else {
-								send(msg,voisinGauche());
+								send(msg, voisinGauche());
 							}
 
 						} else {
 							resultat = false;
-							setColor(Color.BLUE);
+							// setColor(Color.BLUE);
 						}
+					}
 
-					} else {
+					else {
 						if (message.getId() > ID) {
-							
-							
+
 							// On doit renvoyer au destinataire cette fois
-							if (message.getSens()==Sens.DROIT) {
+							if (message.getSens() == Sens.DROIT) {
 								send(new ReplyMessage(message.getId(), Sens.GAUCHE), voisinGauche());
 							} else {
 								send(new ReplyMessage(message.getId(), Sens.DROIT), voisinDroit());
 							}
 						} else {
 							resultat = false;
-							setColor(Color.BLUE);
+							// setColor(Color.BLUE);
 						}
 					}
 				}
@@ -99,28 +99,30 @@ public class APDNode extends sinalgo.nodes.Node {
 			} else if (msg instanceof ReplyMessage) {
 				ReplyMessage message = (ReplyMessage) msg;
 				if (message.getId() != ID) {
-					// On fait juste suivre le message reçu, merci l'algo d'être explicite sur ce qu'est M, vraiment MERCI ! 
-					if (message.getSens()==Sens.DROIT) {
-						send(msg,voisinDroit());
+					// On fait juste suivre le message reçu, merci l'algo d'être
+					// explicite sur ce qu'est M, vraiment MERCI !
+					if (message.getSens() == Sens.DROIT) {
+						send(msg, voisinDroit());
 					} else {
-						send(msg,voisinGauche());
+						send(msg, voisinGauche());
 					}
 				} else {
-					n++;
-					if (n == 2) {
-						n = 0;
-						l *= 2;
-						send(new AskMessage(ID, l-1, Sens.DROIT), voisinDroit());
-						send(new AskMessage(ID, l-1, Sens.GAUCHE), voisinGauche());
+					
+					if (message.getId() == ID) { // probablement le test le plus utile de l'histoire de l'informatique
+						n++;
+						if (n == 2) {
+							n = 0;
+							l= l*2;
+							send(new AskMessage(ID, l - 1, Sens.DROIT), voisinDroit());
+							send(new AskMessage(ID, l - 1, Sens.GAUCHE), voisinGauche());
+						}
 					}
+					
 				}
 			}
 
-			
 		}
 	}
-
-	private static Random random = new Random();
 
 	public void preStep() {
 	};
@@ -139,6 +141,6 @@ public class APDNode extends sinalgo.nodes.Node {
 	@Override
 	public void neighborhoodChange() {
 		// TODO Auto-generated method stub
-		
+
 	}
 }
