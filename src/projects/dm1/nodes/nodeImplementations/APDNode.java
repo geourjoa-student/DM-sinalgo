@@ -29,6 +29,8 @@ public class APDNode extends sinalgo.nodes.Node {
 		l = 1;
 		n = 0;
 		ID = compteur++;
+		
+		resultat=false;
 	}
 
 	/* InitNode() { ... } */
@@ -43,8 +45,8 @@ public class APDNode extends sinalgo.nodes.Node {
 		send(messageDroit, voisinDroit());
 		send(messageGauche, voisinGauche());
 		
-		System.out.println( ID + " emet ASK vers " + voisinDroit().ID + "\n");
-		System.out.println( ID + " emet ASK vers " + voisinGauche().ID + "\n");
+		System.out.println( ID + " emet ASK vers droit " + voisinDroit().ID + "\n");
+		System.out.println( ID + " emet ASK vers gauche" + voisinGauche().ID + "\n");
 	}
 
 	public String toString() {
@@ -60,6 +62,18 @@ public class APDNode extends sinalgo.nodes.Node {
 	protected Node voisinGauche() {
 		ReusableListIterator<Edge> it = outgoingConnections.iterator();
 		it.next();
+		return it.next().endNode;
+	}
+	
+	private Node otherNeighborhood(APDNode n){
+		ReusableListIterator<Edge> it = outgoingConnections.iterator();
+		
+		
+		Node firstNode = it.next().endNode;
+		
+		if((APDNode) firstNode!=n ){
+			return firstNode;
+		}
 		return it.next().endNode;
 	}
 
@@ -83,15 +97,9 @@ public class APDNode extends sinalgo.nodes.Node {
 
 							message.decrementTtl();
 
-							if (message.getSens() == Sens.DROIT) {
-								send(msg, voisinDroit());
-								System.out.println(ID + " emet ASK de " + message.getId() + " avec ttl " + message.getTtl() + " vers " + voisinDroit().ID + "\n");
-
-							} else {
-								send(msg, voisinGauche());
-								System.out.println(ID + " emet ASK de " + message.getId() + " avec ttl " + message.getTtl() + " vers " + voisinGauche().ID + "\n");
-
-							}
+							
+								send(msg, otherNeighborhood((APDNode) inbox.getSender()));
+								
 
 						} else {
 							resultat = false;
@@ -103,16 +111,9 @@ public class APDNode extends sinalgo.nodes.Node {
 					else {
 						if (message.getId() > ID) {
 
-							// On doit renvoyer au destinataire cette fois
-							if (message.getSens() == Sens.DROIT) {
-								send(new ReplyMessage(message.getId(), Sens.GAUCHE), voisinGauche());
-								System.out.println(ID + " emet Reply de " + message.getId() + " vers " + voisinGauche().ID + "\n");
-
-							} else {
-								send(new ReplyMessage(message.getId(), Sens.DROIT), voisinDroit());
-								System.out.println(ID + " emet Reply de " + message.getId() + " vers " + voisinDroit().ID + "\n");
-
-							}
+							
+								send(new ReplyMessage(message.getId(), Sens.GAUCHE), inbox.getSender());
+								
 						} else {
 							resultat = false;
 							System.out.println(ID + " n'est pas élu (cond 2), ID recu " + message.getId() + ".\n");
@@ -130,15 +131,9 @@ public class APDNode extends sinalgo.nodes.Node {
 						// On fait juste suivre le message reçu, merci l'algo
 						// d'être
 						// explicite sur ce qu'est M, vraiment MERCI !
-						if (message.getSens() == Sens.DROIT) {
-							send(msg, voisinDroit());
-							System.out.println(ID + " transmet Reply de " + message.getId() + " vers " + voisinDroit().ID + "\n");
-
-						} else {
-							send(msg, voisinGauche());
-							System.out.println(ID + " transmet Reply de " + message.getId() + " vers " + voisinGauche().ID + "\n");
-
-						}
+						
+							send(message, otherNeighborhood((APDNode) inbox.getSender()));
+							
 					} else {
 
 						if (message.getId() == ID) { // probablement le test le
