@@ -3,6 +3,7 @@
 package projects.dm1;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import projects.dm1.nodes.nodeImplementations.*;
 import sinalgo.nodes.Node;
@@ -44,6 +45,11 @@ public class CustomGlobal extends AbstractCustomGlobal {
 	public void ringButton() {
 		buildRing(15);
 	}
+	
+	@AbstractCustomGlobal.CustomButton(buttonText = "Build a random Ring Network")
+	public void ringRandomButton() {
+		buildRandomRing(15);
+	}
 
 	private void addEdge(Node from, Node to) {
 		from.addConnectionTo(to);
@@ -80,6 +86,54 @@ public class CustomGlobal extends AbstractCustomGlobal {
 		addEdge(theNodes[0], theNodes[numOfNodes - 1]);
 		// Repaint the GUI as we have added some nodes
 		sinalgo.tools.Tools.repaintGUI();
+		
+		for (int i = 0; i < theNodes.length; i++) {
+			theNodes[i].initiate();
+		}
+	}
+	
+	
+	private void buildRandomRing(int numOfNodes) {
+		sinalgo.tools.Tools.removeAllNodes();
+
+		// nodes
+		APDNode[] theNodes = new APDNode[numOfNodes];
+
+		// the center
+		double centerPosX = sinalgo.configuration.Configuration.dimX / 2;
+		double centerPosY = sinalgo.configuration.Configuration.dimY / 2;
+
+		// the ring...
+		double initAngle = 2 * Math.PI / numOfNodes;
+		double range = 200.0;
+		double angle = 0;
+		for (int i = 0; i < numOfNodes; i++) {
+			double posX = centerPosX + range * Math.cos(angle);
+			double posY = centerPosY + range * Math.sin(angle);
+			APDNode node = new APDNode();
+		
+			node.setPosition(posX, posY, 0);
+			node.finishInitializationWithDefaultModels(true);
+			if (i > 0)
+				addEdge(theNodes[i - 1], node);
+			theNodes[i] = node;
+			angle += initAngle;
+		}
+		addEdge(theNodes[0], theNodes[numOfNodes - 1]);
+		// Repaint the GUI as we have added some nodes
+		sinalgo.tools.Tools.repaintGUI();
+		
+		// Codé avec les pieds 
+		for (int i = 0; i < numOfNodes; i++) {
+			Random rand = new Random();
+			
+			int a = rand.nextInt(numOfNodes);
+			int b = rand.nextInt(numOfNodes);
+			
+			int temp = theNodes[a].ID;
+			theNodes[a].ID=theNodes[b].ID;
+			theNodes[b].ID=temp;
+		}
 		
 		for (int i = 0; i < theNodes.length; i++) {
 			theNodes[i].initiate();
