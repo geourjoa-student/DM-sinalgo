@@ -29,8 +29,8 @@ public class APDNode extends sinalgo.nodes.Node {
 		l = 1;
 		n = 0;
 		ID = compteur++;
-		
-		resultat=false;
+
+		resultat = false;
 	}
 
 	/* InitNode() { ... } */
@@ -44,9 +44,9 @@ public class APDNode extends sinalgo.nodes.Node {
 
 		send(messageDroit, voisinDroit());
 		send(messageGauche, voisinGauche());
-		
-		System.out.println( ID + " emet ASK vers droit " + voisinDroit().ID + "\n");
-		System.out.println( ID + " emet ASK vers gauche" + voisinGauche().ID + "\n");
+
+		//System.out.println(ID + " emet ASK vers droit " + voisinDroit().ID + "\n");
+		//System.out.println(ID + " emet ASK vers gauche" + voisinGauche().ID + "\n");
 	}
 
 	public String toString() {
@@ -64,14 +64,13 @@ public class APDNode extends sinalgo.nodes.Node {
 		it.next();
 		return it.next().endNode;
 	}
-	
-	private Node otherNeighborhood(APDNode n){
+
+	private Node otherNeighborhood(APDNode n) {
 		ReusableListIterator<Edge> it = outgoingConnections.iterator();
-		
-		
+
 		Node firstNode = it.next().endNode;
-		
-		if((APDNode) firstNode!=n ){
+
+		if ((APDNode) firstNode != n) {
 			return firstNode;
 		}
 		return it.next().endNode;
@@ -83,27 +82,20 @@ public class APDNode extends sinalgo.nodes.Node {
 
 			if (msg instanceof AskMessage) {
 				AskMessage message = (AskMessage) msg;
-				
-				System.out.println(ID + " recoit ASK de " + message.getId() + " avec ttl " + message.getTtl() + "\n");
+				//System.out.println(ID + " recoit ASK de " + message.getId() + " avec ttl " + message.getTtl() + "\n");
 
 				if (message.getId() == ID) {
 					resultat = true;
 					setColor(Color.GREEN);
-					
+
 					System.out.println(ID + " est élu.\n");
 				} else {
 					if (message.getTtl() > 0) {
 						if (message.getId() > ID) {
 
 							message.decrementTtl();
-
-							
-								send(msg, otherNeighborhood((APDNode) inbox.getSender()));
-								
-
-						} else {
+							send(msg, otherNeighborhood((APDNode) inbox.getSender()));
 							resultat = false;
-							System.out.println(ID + " n'est pas élu (cond 1), ID recu " + message.getId() + ".\n");
 							setColor(Color.BLUE);
 						}
 					}
@@ -111,12 +103,9 @@ public class APDNode extends sinalgo.nodes.Node {
 					else {
 						if (message.getId() > ID) {
 
-							
-								send(new ReplyMessage(message.getId(), Sens.GAUCHE), inbox.getSender());
-								
-						} else {
+							send(new ReplyMessage(message.getId(), Sens.GAUCHE), inbox.getSender());
 							resultat = false;
-							System.out.println(ID + " n'est pas élu (cond 2), ID recu " + message.getId() + ".\n");
+							//System.out.println(ID + " n'est pas élu (cond 2), ID recu " + message.getId() + ".\n");
 							setColor(Color.BLUE);
 						}
 					}
@@ -125,15 +114,15 @@ public class APDNode extends sinalgo.nodes.Node {
 			} else {
 				if (msg instanceof ReplyMessage) {
 					ReplyMessage message = (ReplyMessage) msg;
-					System.out.println(ID + " recoit Reply de " + message.getId() + "\n");
-					
+					//System.out.println(ID + " recoit Reply de " + message.getId() + "\n");
+
 					if (message.getId() != ID) {
 						// On fait juste suivre le message reçu, merci l'algo
 						// d'être
 						// explicite sur ce qu'est M, vraiment MERCI !
-						
-							send(message, otherNeighborhood((APDNode) inbox.getSender()));
-							
+
+						send(message, otherNeighborhood((APDNode) inbox.getSender()));
+
 					} else {
 
 						if (message.getId() == ID) { // probablement le test le
@@ -145,10 +134,12 @@ public class APDNode extends sinalgo.nodes.Node {
 								n = 0;
 								l = l * 2;
 								send(new AskMessage(ID, l - 1, Sens.DROIT), voisinDroit());
-								System.out.println(ID + " emet ASK de " + message.getId() + " avec ttl " + (l-1) + " vers " + voisinDroit().ID + "\n");
+								/*System.out.println(ID + " emet ASK de " + message.getId() + " avec ttl " + (l - 1)
+										+ " vers " + voisinDroit().ID + "\n");*/
 
 								send(new AskMessage(ID, l - 1, Sens.GAUCHE), voisinGauche());
-								System.out.println(ID + " emet ASK de " + message.getId() + " avec ttl " + (l-1) + " vers " + voisinDroit().ID + "\n");
+								/*System.out.println(ID + " emet ASK de " + message.getId() + " avec ttl " + (l - 1)
+										+ " vers " + voisinDroit().ID + "\n");*/
 
 							}
 						}
